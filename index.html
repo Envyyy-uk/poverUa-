@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Павербанк AWEI P101K — заряд, коли немає світла</title>
+<meta name="description" content="Потужний павербанк AWEI P101K зі швидкою зарядкою 22.5W, дисплеєм заряду і ліхтарем. Оплата при отриманні на Новій Пошті.">
+<meta property="og:title" content="Павербанк AWEI P101K — заряд, коли немає світла">
+<meta property="og:description" content="Швидка зарядка 22.5W, дисплей заряду, ліхтар. Оплата при отриманні.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   ЄДИНИЙ БЛОК НАЛАШТУВАНЬ
+   Усе, що треба міняти — тільки тут. Нижче код не чіпати.
+   ═══════════════════════════════════════════════════════════════════ */
+var CONFIG = {
+
+  /* ── Товар ────────────────────────────────────────────────────── */
+  sku:        "awei-p101k",           // МАЛИМИ. Так само записано в DROP у CRM.
+  product:    "Павербанк AWEI P101K", // назва, яку побачиш у Telegram
+  price:      2790,                   // ціна продажу, грн
+  oldPrice:   3490,                   // перекреслена ціна, грн
+  dropPrice:  1755,                   // закупка — НЕ показується на сторінці, тільки для себе
+
+  /* ── Контакти ─────────────────────────────────────────────────── */
+  phone:      "",                     // напр. "+380958051643". Порожньо — кнопка не показується.
+  phoneLabel: "",
+  telegram:   "",                     // нік БЕЗ @, напр. "Powerbank_Mng". Порожньо — поля в формі не буде.
+  workDays:   "Пн–Нд",
+  workTime:   "09:00–20:00",
+
+  /* ── Meta Pixel ───────────────────────────────────────────────── */
+  pixelId:    "",                     // ВСТАВИТИ ID нового пікселя. Порожньо = вимкнено.
+
+  /* ── CRM (та сама, що в секатора) ─────────────────────────────── */
+  crmUrl:     "https://sekator-crm.dekavork.workers.dev/lead",
+  /* sku — латиниця, МАЛИМИ. Обраний раз і назавжди: по ньому звіти. */
+
+  /* ── Фото (лежать у папці photos/ поряд з index.html) ─────────── */
+  photos: [
+    "photos/1.jpg",   // студійне, головне
+    "photos/2.jpg",   // у руці — видно реальний розмір, найсильніше для довіри
+    "photos/3.jpg",   // реальне фото з коробкою
+    "photos/4.jpg",   // ракурс з кнопкою ліхтаря
+    "photos/5.jpg",   // порти зблизька
+    "photos/6.jpg",   // вигляд зверху, дисплей
+    "photos/7.jpg"    // комплект з кабелем
+  ],
+
+  /* ── Таймер знижки ────────────────────────────────────────────── */
+  timer: {
+    on:       true,
+    minutes:  60,                              // скільки триває знижка
+    label:    "Ціна зі знижкою діє ще",
+    endLabel: "Знижку продовжено на день",     // текст, коли час вийшов
+    restart:  true                             // true = запускається наново, сторінка не «вмирає»
+  },
+
+  /* ── Головний екран ───────────────────────────────────────────── */
+  heroKicker:  "Готово до відключень",
+  heroTitle:   "Світло зникло — у тебе воно є",
+  heroText:    "Потужний павербанк AWEI P101K тримає телефон, роутер і лампу, поки в будинку темно. Швидка зарядка 22.5W і дисплей, який показує точний залишок.",
+
+  /* ── Калькулятор «на скільки вистачить» ───────────────────────── */
+  /* Цифри свідомо занижені — краще недообіцяти, ніж отримати повернення */
+  calc: [
+    { id:"phone",  icon:"📱", label:"Телефон",    unit:"повних зарядок", from:4,  to:6  },
+    { id:"router", icon:"📶", label:"Wi-Fi роутер", unit:"годин роботи",  from:6,  to:9  },
+    { id:"lamp",   icon:"💡", label:"LED-лампа",   unit:"годин світла",   from:14, to:20 },
+    { id:"tablet", icon:"📟", label:"Планшет",     unit:"повні зарядки",  from:2,  to:3  }
+  ],
+
+  /* ── Переваги ─────────────────────────────────────────────────── */
+  benefits: [
+    { icon:"⚡", title:"Швидка зарядка 22.5W",  text:"Телефон набирає більшу частину заряду за кілька десятків хвилин." },
+    { icon:"🔢", title:"Дисплей із залишком",   text:"Видно точний відсоток — не треба гадати, скільки ще є." },
+    { icon:"🔦", title:"Великий ліхтар",         text:"Окрема кнопка. Світить у під'їзді, у ванній, у погребі." },
+    { icon:"🔌", title:"Два пристрої разом",     text:"USB і Type-C одночасно: телефон дружині й собі." },
+    { icon:"🎒", title:"Ремінець на руку",       text:"Не випадає з рук і не губиться в сумці." },
+    { icon:"📦", title:"Оплата при отриманні",   text:"Спершу дивишся на пошті, потім платиш." }
+  ],
+
+  /* ── Характеристики ───────────────────────────────────────────── */
+  specs: [
+    ["Модель",            "AWEI P101K"],
+    ["Швидка зарядка",    "22.5W"],
+    ["Вихід Type-C",      "до 20W"],
+    ["Вихід USB-A",       "до 22.5W"],
+    ["Вхід",              "Type-C / Micro-USB"],
+    ["Дисплей",           "цифровий, показує залишок"],
+    ["Ліхтар",            "є, окрема кнопка"],
+    ["Пристроїв одночасно","2"],
+    ["Корпус",            "пластик, ремінець на руку"],
+    ["Колір",             "чорний"],
+    ["У комплекті",       "павербанк, кабель, упаковка"]
+  ],
+
+  /* ── Відгуки ──────────────────────────────────────────────────── */
+  reviews: [
+    { name:"Оксана, Полтава",  text:"Взяла після того, як два дні сиділи без світла. Телефон і роутер тримає спокійно, дитина уроки робить." },
+    { name:"Сергій, Дніпро",   text:"Дисплей — найкорисніше. Одразу видно, скільки лишилось, не треба вгадувати." },
+    { name:"Ірина, Львів",     text:"Замовляла мамі. Пояснювати нічого не довелось — кнопка ліхтаря і все." }
+  ],
+
+  /* ── Доставка ─────────────────────────────────────────────────── */
+  deliveryText: "Відправка Новою Поштою протягом 1–2 робочих днів. Оплата при отриманні — оглядаєш посилку у відділенні й тільки потім платиш.",
+
+  /* ── Дефіцит (можна вимкнути) ─────────────────────────────────── */
+  showStock:  true,
+  stockLeft:  9,
+
+};
+/* ═══════════ КІНЕЦЬ НАЛАШТУВАНЬ ═══════════════════════════════════ */
+</script>
+
+<style>
+:root{
+  --ink:      #131A24;
+  --ink-soft: #3C4757;
+  --paper:    #FBFAF7;
+  --panel:    #FFFFFF;
+  --line:     #E4E0D8;
+  --deep:     #1B3452;
+  --glow:     #FFA724;
+  --glow-dim: #FFF0D6;
+  --ok:       #256F52;
+  --alert:    #B3341F;
+
+  --f-display: 'Unbounded', system-ui, sans-serif;
+  --f-body:    'Manrope', system-ui, -apple-system, sans-serif;
+
+  --pad: 20px;
+  --r:   14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--f-body);
+  background:var(--paper);
+  color:var(--ink);
+  font-size:17px;
+  line-height:1.6;
+  padding-bottom:78px;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input,select{font-family:inherit;font-size:inherit}
+:focus-visible{outline:3px solid var(--glow);outline-offset:2px;border-radius:4px}
+
+.wrap{max-width:760px;margin:0 auto;padding:0 var(--pad)}
+.sec{padding:44px 0}
+.sec + .sec{border-top:1px solid var(--line)}
+
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;letter-spacing:-.02em}
+h1{font-size:clamp(29px,7vw,46px);font-weight:800}
+h2{font-size:clamp(23px,5vw,32px);font-weight:600;margin-bottom:8px}
+h3{font-size:18px;font-weight:600}
+
+.eyebrow{
+  font-family:var(--f-body);font-size:13px;font-weight:800;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--deep);
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--glow)}
+.lede{color:var(--ink-soft);font-size:17px;margin-top:14px}
+
+/* ── шапка ── */
+.top{
+  background:var(--deep);color:#fff;padding:11px 0;
+  position:sticky;top:0;z-index:40;
+}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:-.01em}
+.brand span{color:var(--glow)}
+.top a.tel{font-weight:800;font-size:15px;text-decoration:none;white-space:nowrap}
+
+/* ── таймер ── */
+.timerBar{
+  background:var(--ink);color:#fff;padding:11px 0;
+  position:sticky;top:47px;z-index:39;display:none;
+}
+.timerBar.on{display:block}
+.timerBar .wrap{
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+}
+.timerBar .lbl{font-size:14px;font-weight:700;color:#C9D2DE}
+.clock{display:flex;align-items:center;gap:5px}
+.clock b{
+  font-family:var(--f-display);font-weight:800;font-size:20px;
+  background:var(--glow);color:#2A1B00;border-radius:7px;
+  padding:4px 9px;min-width:44px;text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.clock i{font-style:normal;font-weight:800;color:var(--glow);font-size:18px}
+.timerCard{
+  background:var(--ink);color:#fff;border-radius:var(--r);
+  padding:18px 20px;margin-bottom:18px;text-align:center;
+}
+.timerCard .lbl{display:block;font-size:14px;color:#C9D2DE;margin-bottom:10px;font-weight:700}
+.timerCard .clock{justify-content:center}
+
+/* ── герой ── */
+.hero{padding-top:32px}
+.stock{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--glow-dim);color:#7A4A00;border:1px solid #F2D9A8;
+  padding:7px 13px;border-radius:999px;font-size:14px;font-weight:700;margin-bottom:18px;
+}
+.stock i{width:8px;height:8px;border-radius:50%;background:var(--glow);font-style:normal}
+
+.gallery{margin:24px 0 0}
+.gmain{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:zoom-in;
+}
+.gmain img{width:100%;height:100%;object-fit:contain}
+.gthumbs{display:flex;gap:9px;margin-top:10px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.gthumbs button{
+  flex:0 0 66px;height:66px;border:2px solid var(--line);border-radius:9px;
+  background:var(--panel);padding:3px;cursor:pointer;overflow:hidden;
+}
+.gthumbs button[aria-current="true"]{border-color:var(--deep)}
+.gthumbs img{width:100%;height:100%;object-fit:contain}
+
+.priceRow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:26px 0 6px}
+.price{font-family:var(--f-display);font-size:40px;font-weight:800;letter-spacing:-.03em}
+.old{font-size:21px;color:#98A1AE;text-decoration:line-through}
+.save{background:var(--alert);color:#fff;font-size:13px;font-weight:800;padding:5px 10px;border-radius:7px}
+.payNote{color:var(--ink-soft);font-size:15px}
+
+.btn{
+  display:block;width:100%;text-align:center;border:0;cursor:pointer;
+  background:var(--alert);color:#fff;font-family:var(--f-display);font-weight:600;
+  font-size:19px;padding:17px 20px;border-radius:var(--r);text-decoration:none;
+  transition:transform .12s ease,filter .12s ease;
+}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:transparent;color:var(--deep);border:2px solid var(--deep)}
+.btnWrap{margin-top:22px}
+
+/* ── калькулятор (сигнатура) ── */
+.calcBox{
+  background:var(--deep);color:#fff;border-radius:var(--r);
+  padding:26px 22px;margin-top:6px;
+}
+.calcBox h2{color:#fff}
+.calcBox .lede{color:#C4D2E2}
+.calcGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:22px 0}
+.calcGrid button{
+  background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.16);
+  color:#fff;border-radius:11px;padding:14px 10px;cursor:pointer;
+  font-weight:700;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:7px;
+  transition:background .15s ease,border-color .15s ease;
+}
+.calcGrid button em{font-size:24px;font-style:normal;line-height:1}
+.calcGrid button[aria-pressed="true"]{background:var(--glow);border-color:var(--glow);color:#2A1B00}
+.calcOut{
+  background:rgba(0,0,0,.26);border-radius:11px;padding:20px;text-align:center;
+  border:1px dashed rgba(255,255,255,.22);
+}
+.calcNum{font-family:var(--f-display);font-size:44px;font-weight:800;color:var(--glow);line-height:1}
+.calcUnit{font-size:15px;color:#C4D2E2;margin-top:6px}
+.calcFoot{font-size:13px;color:#8FA5BF;margin-top:14px;text-align:center}
+
+/* ── переваги ── */
+.bens{display:grid;gap:12px;margin-top:22px}
+.ben{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:17px 18px;display:flex;gap:14px;align-items:flex-start;
+}
+.ben em{font-size:23px;font-style:normal;line-height:1.2}
+.ben p{color:var(--ink-soft);font-size:15px;margin-top:3px}
+
+/* ── характеристики ── */
+.specs{margin-top:20px;border-top:1px solid var(--line)}
+.specs div{
+  display:flex;justify-content:space-between;gap:16px;
+  padding:12px 2px;border-bottom:1px solid var(--line);font-size:15px;
+}
+.specs dt{color:var(--ink-soft)}
+.specs dd{font-weight:700;text-align:right}
+
+/* ── відгуки ── */
+.revs{display:grid;gap:12px;margin-top:22px}
+.rev{
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--glow);border-radius:0 var(--r) var(--r) 0;padding:17px 18px;
+}
+.rev p{font-size:15px}
+.rev b{display:block;margin-top:9px;font-size:14px;color:var(--ink-soft);font-weight:700}
+
+/* ── форма ── */
+.formSec{background:var(--panel);border-top:1px solid var(--line)}
+.form{margin-top:22px;display:grid;gap:14px}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
+.field input{
+  width:100%;padding:15px 14px;border:2px solid var(--line);border-radius:11px;
+  background:var(--paper);color:var(--ink);
+}
+.field input:focus{border-color:var(--deep);outline:none}
+.field input.bad{border-color:var(--alert)}
+.phoneRow{display:flex;align-items:stretch;gap:0}
+.phoneRow .cc{
+  display:flex;align-items:center;padding:0 13px;font-weight:800;
+  background:var(--line);border:2px solid var(--line);border-right:0;
+  border-radius:11px 0 0 11px;color:var(--ink-soft);
+}
+.phoneRow input{border-radius:0 11px 11px 0}
+.formNote{font-size:14px;color:var(--ink-soft);text-align:center;margin-top:4px}
+.err{color:var(--alert);font-size:13px;font-weight:700;margin-top:5px;display:none}
+.err.on{display:block}
+
+.total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 0;border-top:2px solid var(--ink);margin-top:4px;
+}
+.total b{font-family:var(--f-display);font-size:27px;font-weight:800}
+
+.okBox{
+  display:none;background:var(--glow-dim);border:2px solid var(--glow);
+  border-radius:var(--r);padding:26px 22px;text-align:center;margin-top:22px;
+}
+.okBox.on{display:block}
+.okBox h3{font-size:21px;margin-bottom:8px}
+
+/* ── доставка ── */
+.deliv{background:var(--paper)}
+.delivBox{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;margin-top:18px;color:var(--ink-soft);font-size:15px;
+}
+
+/* ── нижня панель ── */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:rgba(251,250,247,.97);border-top:1px solid var(--line);
+  padding:10px var(--pad);backdrop-filter:blur(8px);
+}
+.dock .wrap{display:flex;align-items:center;gap:14px;padding:0}
+.dock .p{font-family:var(--f-display);font-weight:800;font-size:22px;white-space:nowrap}
+.dock .p s{display:block;font-size:13px;color:#98A1AE;font-weight:400}
+.dock .btn{flex:1;font-size:17px;padding:14px 16px}
+
+footer{padding:26px 0 34px;text-align:center;color:var(--ink-soft);font-size:14px}
+
+/* ── лайтбокс (створюється скриптом) ── */
+.lb{
+  position:fixed;inset:0;z-index:100;background:rgba(10,14,20,.94);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:86vh;object-fit:contain}
+.lb button{
+  position:absolute;top:16px;right:16px;width:46px;height:46px;border-radius:50%;
+  border:0;background:rgba(255,255,255,.16);color:#fff;font-size:26px;cursor:pointer;
+}
+
+@media (min-width:620px){
+  .bens{grid-template-columns:1fr 1fr}
+  .calcGrid{grid-template-columns:repeat(4,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">POWER<span>UA</span></div>
+    <a class="tel" id="topTel" href="#">&nbsp;</a>
+  </div>
+</header>
+
+<div class="timerBar" id="timerBar">
+  <div class="wrap">
+    <span class="lbl" id="timerLabel"></span>
+    <span class="clock" id="timerClock"></span>
+  </div>
+</div>
+
+<main>
+  <section class="sec hero wrap" id="top">
+    <div id="stockBox"></div>
+    <div class="eyebrow" id="kicker"></div>
+    <h1 id="heroTitle"></h1>
+    <p class="lede" id="heroText"></p>
+
+    <div class="gallery">
+      <div class="gmain" id="gmain"></div>
+      <div class="gthumbs" id="gthumbs"></div>
+    </div>
+
+    <div class="priceRow">
+      <div class="price" id="heroPrice"></div>
+      <div class="old" id="heroOld"></div>
+      <div class="save" id="heroSave"></div>
+    </div>
+    <p class="payNote">Оплата при отриманні на Новій Пошті</p>
+    <div class="btnWrap"><a class="btn" href="#order">Замовити зараз</a></div>
+  </section>
+
+  <section class="sec wrap">
+    <div class="calcBox">
+      <div class="eyebrow" style="color:var(--glow)">Порахуй сам</div>
+      <h2>Що тобі треба живити?</h2>
+      <p class="lede">Обери пристрій — покажемо, на скільки орієнтовно вистачить одного заряду.</p>
+      <div class="calcGrid" id="calcGrid"></div>
+      <div class="calcOut">
+        <div class="calcNum" id="calcNum">—</div>
+        <div class="calcUnit" id="calcUnit">оберіть пристрій</div>
+      </div>
+      <p class="calcFoot">Орієнтовні значення для типових пристроїв. Реальний час залежить від моделі та рівня заряду.</p>
+    </div>
+  </section>
+
+  <section class="sec wrap">
+    <div class="eyebrow">Чому саме цей</div>
+    <h2>Шість причин</h2>
+    <div class="bens" id="bens"></div>
+  </section>
+
+  <section class="sec wrap">
+    <div class="eyebrow">Технічно</div>
+    <h2>Характеристики</h2>
+    <dl class="specs" id="specs"></dl>
+  </section>
+
+  <section class="sec wrap">
+    <div class="eyebrow">Відгуки</div>
+    <h2>Що пишуть покупці</h2>
+    <div class="revs" id="revs"></div>
+  </section>
+
+  <section class="sec formSec" id="order">
+    <div class="wrap">
+      <div class="eyebrow">Замовлення</div>
+      <h2>Заповни — і ми передзвонимо</h2>
+      <p class="lede">Досить імені й телефону. Місто та відділення уточнимо під час дзвінка.</p>
+
+      <div class="timerCard" id="timerCard" style="display:none;margin-top:20px">
+        <span class="lbl" id="timerLabel2"></span>
+        <span class="clock" id="timerClock2"></span>
+      </div>
+
+      <form class="form" id="form" novalidate>
+        <div class="field">
+          <label for="f_name">Ім'я</label>
+          <input id="f_name" name="name" type="text" autocomplete="name" placeholder="Як до вас звертатися">
+          <div class="err" id="e_name">Вкажіть ім'я</div>
+        </div>
+
+        <div class="field">
+          <label for="f_phone">Телефон</label>
+          <div class="phoneRow">
+            <span class="cc">+380</span>
+            <input id="f_phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="00 000 00 00">
+          </div>
+          <div class="err" id="e_phone">Введіть 9 цифр після +380</div>
+        </div>
+
+        <div class="field" id="tgField" style="display:none">
+          <label for="f_tg">Telegram <span style="font-weight:400;color:var(--ink-soft)">— не обов'язково</span></label>
+          <input id="f_tg" name="tg" type="text" placeholder="@нік">
+        </div>
+
+        <div class="total">
+          <span>До сплати на пошті</span>
+          <b id="totalVal"></b>
+        </div>
+
+        <button class="btn" type="submit" id="submitBtn">Оформити замовлення</button>
+        <p class="formNote" id="formNote"></p>
+      </form>
+
+      <div class="okBox" id="okBox">
+        <h3>Замовлення прийнято</h3>
+        <p>Менеджер зателефонує протягом робочого дня, щоб підтвердити відділення та адресу.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec deliv wrap">
+    <div class="eyebrow">Доставка</div>
+    <h2>Як це працює</h2>
+    <div class="delivBox" id="delivText"></div>
+  </section>
+</main>
+
+<div class="dock">
+  <div class="wrap">
+    <div class="p"><span id="dockPrice"></span><s id="dockOld"></s></div>
+    <a class="btn" href="#order">Замовити</a>
+  </div>
+</div>
+
+<footer class="wrap">
+  <div id="footTel"></div>
+  <p style="margin-top:8px">© <span id="year"></span> POWERUA</p>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   КОД. Не редагувати — усе налаштування у CONFIG вгорі.
+   Кожен блок ізольований: якщо один впаде, решта працює.
+   ══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  var C = window.CONFIG || {};
+  var $ = function (id) { return document.getElementById(id); };
+
+  function block(name, fn) {
+    try { fn(); } catch (e) { console.error("[block:" + name + "]", e); }
+  }
+  function money(n) {
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " грн";
+  }
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var state = { photo: 0 };
+
+  /* ── Meta Pixel ─────────────────────────────────────────────── */
+  block("pixel", function () {
+    if (!C.pixelId) return;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', C.pixelId);
+    fbq('track', 'PageView');
+    fbq('track', 'ViewContent', {
+      content_name: C.product, content_ids: [C.sku],
+      content_type: 'product', value: C.price, currency: 'UAH'
+    });
+  });
+  function track(ev, data) {
+    try { if (window.fbq) fbq('track', ev, data || {}); } catch (e) {}
+  }
+
+  /* ── Текстові блоки ─────────────────────────────────────────── */
+  block("texts", function () {
+    $("kicker").textContent    = C.heroKicker || "";
+    $("heroTitle").textContent = C.heroTitle || C.product || "";
+    $("heroText").textContent  = C.heroText || "";
+    $("delivText").textContent = C.deliveryText || "";
+    $("year").textContent      = new Date().getFullYear();
+
+    var tel = $("topTel");
+    tel.href = "tel:" + (C.phone || "");
+    tel.textContent = C.phoneLabel || C.phone || "";
+    $("footTel").innerHTML = C.phone
+      ? '<a href="tel:' + esc(C.phone) + '" style="font-weight:700">' + esc(C.phoneLabel || C.phone) + '</a>'
+      : "";
+  });
+
+  /* ── Ціни ───────────────────────────────────────────────────── */
+  block("prices", function () {
+    $("heroPrice").textContent = money(C.price);
+    $("dockPrice").textContent = money(C.price);
+    if (C.oldPrice && C.oldPrice > C.price) {
+      $("heroOld").textContent = money(C.oldPrice);
+      $("dockOld").textContent = money(C.oldPrice);
+      var pct = Math.round((1 - C.price / C.oldPrice) * 100);
+      $("heroSave").textContent = "−" + pct + "%";
+    } else {
+      $("heroSave").style.display = "none";
+    }
+  });
+
+  /* ── Наявність ──────────────────────────────────────────────── */
+  block("stock", function () {
+    if (!C.showStock) return;
+    $("stockBox").innerHTML =
+      '<div class="stock"><i></i>В наявності — залишилось ' + esc(C.stockLeft) + ' шт</div>';
+  });
+
+  /* ── Таймер знижки ──────────────────────────────────────────── */
+  block("timer", function () {
+    var T = C.timer || {};
+    if (!T.on) return;
+
+    var KEY = "pb_deadline_" + (C.sku || "x");
+    var LEN = Math.max(1, T.minutes || 60) * 60000;
+    var memory = null;
+
+    function readStore() {
+      try { return localStorage.getItem(KEY); } catch (e) { return memory; }
+    }
+    function writeStore(v) {
+      memory = v;
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+    }
+
+    function deadline() {
+      var v = parseInt(readStore(), 10);
+      if (!v || isNaN(v) || v <= Date.now()) {
+        if (v && !T.restart) return v;      // час вийшов і рестарт вимкнено
+        v = Date.now() + LEN;
+        writeStore(String(v));
+      }
+      return v;
+    }
+
+    var end = deadline();
+    var bar = $("timerBar"), card = $("timerCard");
+    var expired = false;
+
+    function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+    function paint() {
+      var left = end - Date.now();
+
+      if (left <= 0) {
+        if (T.restart) {
+          end = Date.now() + LEN;
+          writeStore(String(end));
+          left = LEN;
+        } else if (!expired) {
+          expired = true;
+          $("timerLabel").textContent  = T.endLabel || "";
+          $("timerLabel2").textContent = T.endLabel || "";
+          $("timerClock").innerHTML  = "";
+          $("timerClock2").innerHTML = "";
+          return;
+        } else {
+          return;
+        }
+      }
+
+      var s = Math.floor(left / 1000);
+      var h = Math.floor(s / 3600);
+      var m = Math.floor((s % 3600) / 60);
+      var sec = s % 60;
+
+      var html = (h > 0 ? "<b>" + pad(h) + "</b><i>:</i>" : "") +
+                 "<b>" + pad(m) + "</b><i>:</i><b>" + pad(sec) + "</b>";
+
+      $("timerClock").innerHTML  = html;
+      $("timerClock2").innerHTML = html;
+    }
+
+    $("timerLabel").textContent  = T.label || "";
+    $("timerLabel2").textContent = T.label || "";
+    bar.classList.add("on");
+    card.style.display = "block";
+
+    paint();
+    setInterval(paint, 1000);
+  });
+
+  /* ── Галерея ────────────────────────────────────────────────── */
+  block("gallery", function () {
+    var photos = (C.photos || []).slice();
+    if (!photos.length) return;
+
+    var main = $("gmain"), thumbs = $("gthumbs");
+
+    function paint(i) {
+      state.photo = i;
+      main.innerHTML = '<img src="' + esc(photos[i]) + '" alt="' + esc(C.product) + '" loading="eager">';
+      Array.prototype.forEach.call(thumbs.children, function (b, n) {
+        b.setAttribute("aria-current", n === i ? "true" : "false");
+      });
+    }
+
+    photos.forEach(function (src, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Фото " + (i + 1));
+      b.innerHTML = '<img src="' + esc(src) + '" alt="" loading="lazy">';
+      b.addEventListener("click", function () { paint(i); });
+      thumbs.appendChild(b);
+    });
+    paint(0);
+
+    /* лайтбокс створюємо через JS — жодних зайвих <div> у розмітці */
+    var lb = document.createElement("div");
+    lb.className = "lb";
+    lb.innerHTML = '<img alt=""><button type="button" aria-label="Закрити">×</button>';
+    document.body.appendChild(lb);
+
+    function open() {
+      lb.querySelector("img").src = photos[state.photo];
+      lb.classList.add("on");
+      document.body.style.overflow = "hidden";
+    }
+    function close() {
+      lb.classList.remove("on");
+      document.body.style.overflow = "";
+    }
+    main.addEventListener("click", open);
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb || e.target.tagName === "BUTTON") close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") close();
+    });
+  });
+
+  /* ── Калькулятор ────────────────────────────────────────────── */
+  block("calc", function () {
+    var items = C.calc || [];
+    if (!items.length) return;
+    var grid = $("calcGrid"), num = $("calcNum"), unit = $("calcUnit");
+
+    items.forEach(function (it, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-pressed", "false");
+      b.innerHTML = '<em>' + esc(it.icon) + '</em>' + esc(it.label);
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(grid.children, function (x) {
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.setAttribute("aria-pressed", "true");
+        num.textContent = it.from + "–" + it.to;
+        unit.textContent = it.unit;
+      });
+      grid.appendChild(b);
+      if (i === 0) setTimeout(function () { b.click(); }, 0);
+    });
+  });
+
+  /* ── Переваги / характеристики / відгуки ────────────────────── */
+  block("benefits", function () {
+    $("bens").innerHTML = (C.benefits || []).map(function (b) {
+      return '<div class="ben"><em>' + esc(b.icon) + '</em><div>' +
+             '<h3>' + esc(b.title) + '</h3><p>' + esc(b.text) + '</p></div></div>';
+    }).join("");
+  });
+
+  block("specs", function () {
+    $("specs").innerHTML = (C.specs || []).map(function (r) {
+      return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
+    }).join("");
+  });
+
+  block("reviews", function () {
+    $("revs").innerHTML = (C.reviews || []).map(function (r) {
+      return '<div class="rev"><p>' + esc(r.text) + '</p><b>' + esc(r.name) + '</b></div>';
+    }).join("");
+  });
+
+  /* ── Сума ───────────────────────────────────────────────────── */
+  block("total", function () {
+    $("totalVal").textContent = money(C.price);
+  });
+
+  /* ── Графік і Telegram-поле ─────────────────────────────────── */
+  block("extras", function () {
+    if (C.telegram) $("tgField").style.display = "block";
+    var bits = [];
+    if (C.workDays) bits.push(C.workDays);
+    if (C.workTime) bits.push(C.workTime);
+    $("formNote").textContent = bits.length
+      ? "Передзвонимо " + bits.join(", ")
+      : "Передзвонимо найближчим часом";
+  });
+
+  /* ── Телефон: рівно 9 цифр після +380 ───────────────────────── */
+  function digits9(v) {
+    var d = String(v).replace(/\D/g, "");
+    d = d.replace(/^380/, "").replace(/^0/, "");
+    return d.slice(0, 9);
+  }
+
+  block("phoneMask", function () {
+    var el = $("f_phone");
+    if (!el) return;
+    el.addEventListener("input", function () {
+      var d = digits9(el.value), out = d;
+      if (d.length > 2) out = d.slice(0, 2) + " " + d.slice(2);
+      if (d.length > 5) out = d.slice(0, 2) + " " + d.slice(2, 5) + " " + d.slice(5);
+      el.value = out;
+    });
+  });
+
+  /* ── Відправка ──────────────────────────────────────────────── */
+  block("form", function () {
+    var form = $("form");
+    if (!form) return;
+    var btn = $("submitBtn");
+    var sent = false;
+
+    ["name", "phone"].forEach(function (k) {
+      $("f_" + k).addEventListener("input", function () {
+        $("f_" + k).classList.remove("bad");
+        $("e_" + k).classList.remove("on");
+      });
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (sent) return;
+
+      var nameEl = $("f_name"), phoneEl = $("f_phone");
+      var badName  = nameEl.value.trim().length < 2;
+      var badPhone = digits9(phoneEl.value).length !== 9;
+
+      nameEl.classList.toggle("bad", badName);
+      $("e_name").classList.toggle("on", badName);
+      phoneEl.classList.toggle("bad", badPhone);
+      $("e_phone").classList.toggle("on", badPhone);
+
+      if (badName || badPhone) { (badName ? nameEl : phoneEl).focus(); return; }
+
+      var tgEl = $("f_tg");
+      var payload = {
+        name:  nameEl.value.trim(),
+        phone: "+380" + digits9(phoneEl.value),
+        tg:    tgEl ? tgEl.value.trim().replace(/^@/, "") : "",
+        utm:   location.search,
+        ts:    new Date().toISOString()
+      };
+
+      sent = true;
+      btn.disabled = true;
+      btn.textContent = "Відправляємо…";
+
+      /* 1. Робочий бот заявок цього сайту */
+      fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(function () {});
+
+      /* 2. Спільна CRM — звіти по обох товарах */
+      if (C.crmUrl) {
+        fetch(C.crmUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name:    payload.name,
+            phone:   payload.phone,
+            tg:      payload.tg,
+            sku:     C.sku,
+            product: C.product,
+            price:   C.price,
+            utm:     payload.utm
+          })
+        }).catch(function () {});
+      }
+
+      track("Lead", {
+        content_name: C.product, content_ids: [C.sku],
+        value: C.price, currency: "UAH"
+      });
+
+      form.style.display = "none";
+      $("okBox").classList.add("on");
+      $("okBox").scrollIntoView({ block: "center" });
+    });
+  });
+
+  /* ── InitiateCheckout ───────────────────────────────────────── */
+  block("initiate", function () {
+    var fired = false, f = $("f_phone");
+    if (!f) return;
+    f.addEventListener("focus", function () {
+      if (fired) return;
+      fired = true;
+      track("InitiateCheckout", {
+        content_name: C.product, content_ids: [C.sku],
+        value: C.price, currency: "UAH"
+      });
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
