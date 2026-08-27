@@ -43,7 +43,7 @@ var CONFIG = {
   phone:    "+380958051643",       // для Viber. Порожньо — кнопки не буде.
   telegram: "powerua_help_bot",    // нік бота БЕЗ @. Порожньо — кнопки не буде.
   tgStart:  "p101k",               // мітка товару в посиланні на бота
-  whatsapp: "+380501591084",                    // "380XXXXXXXXX" без плюса. Порожньо — кнопки не буде.
+  whatsapp: "",                    // "380XXXXXXXXX" без плюса. Порожньо — кнопки не буде.
   waText:   "Доброго дня! Цікавить павербанк AWEI P101K",
   email:    "",
   facebook: "",                    // посилання на сторінку PowerUa
@@ -309,7 +309,18 @@ h3{font-size:17px;font-weight:800}
 
 footer{background:var(--bg);text-align:center;padding:24px 18px 30px;font-size:14px;color:var(--soft)}
 footer a{color:var(--deep);font-weight:700}
-footer .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+footer .links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 4px}
+footer .links a{
+  display:flex;align-items:center;justify-content:center;
+  width:46px;height:46px;border-radius:50%;
+  background:var(--c);color:#fff;text-decoration:none;
+  box-shadow:0 2px 8px rgba(28,34,43,.16);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+footer .links a:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(28,34,43,.24)}
+footer .links a:active{transform:translateY(0)}
+footer .links svg{width:23px;height:23px;fill:#fff;display:block}
+footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
 
 .lb{position:fixed;inset:0;z-index:100;background:rgba(12,16,22,.94);display:none;align-items:center;justify-content:center;padding:18px}
 .lb.on{display:flex}
@@ -694,24 +705,45 @@ footer .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin
   });
 
   /* ── Футер ──────────────────────────────────────────────────── */
+  var ICONS = {
+    viber: 'M11.4 0C9.5 0 4 .3 1.9 2.2.6 3.5.1 5.4 0 7.8c0 2.4-.1 6.9 4.2 8.1v1.9s0 .8.5 1c.6.2 1-.4 1.6-1l1-1.2c2.9.3 5.2-.3 5.4-.4.6-.2 4.2-.7 4.8-5.5.6-4.9-.3-8-1.9-9.4C14.9.8 13.3 0 11.4 0zm.1 1.5c1.6 0 3 .6 4.1 1.6 1.3 1.2 2 3.9 1.5 8.1-.5 4-3.3 4.3-3.8 4.5-.2 0-2.2.5-4.7.4l-1.4 1.6-1 1.1c-.1.1-.2.1-.3.1-.1 0-.1-.1-.1-.3v-3.1C.8 14.5.9 10.7.9 8.6c0-2.1.5-3.6 1.5-4.6C4.2 2.4 8.9 1.5 11.5 1.5zM11 3.5c-.2 0-.3.1-.3.3s.1.3.3.3c1.2 0 2.2.4 3 1.1.8.8 1.2 1.9 1.2 3.3 0 .2.1.3.3.3s.3-.1.3-.3c0-1.5-.5-2.8-1.4-3.7-.9-.9-2.1-1.3-3.4-1.3zm-4.3.9c-.2 0-.4.1-.6.2-.4.3-1.2 1.2-1.2 2 0 .5.2 1 .5 1.6.6 1.2 2.6 4.3 5.7 5.4.6.2 1.1.3 1.5.3.7 0 1.2-.3 1.6-.7.3-.4.5-.8.5-1.2 0-.2-.1-.4-.2-.5-.3-.3-1.4-.9-1.8-1-.1 0-.2-.1-.3-.1-.3 0-.5.2-.8.6-.2.2-.4.5-.5.5h-.1c-.6-.2-1.6-.9-2.3-1.7-.5-.6-.8-1.2-.9-1.5 0-.1.2-.3.4-.5.3-.3.6-.6.6-1 0-.2 0-.3-.1-.5-.1-.3-.6-1.4-.9-1.7-.2-.2-.4-.2-.6-.2zm4.6.7c-.2 0-.3.1-.3.3s.1.3.3.3c.7 0 1.2.2 1.6.6.4.4.6 1 .6 1.8 0 .2.1.3.3.3s.3-.1.3-.3c0-.9-.3-1.7-.8-2.2-.5-.5-1.2-.8-2-.8zm.3 1.6c-.2 0-.3.1-.3.3s.1.3.3.3c.7 0 1 .3 1 1 0 .2.1.3.3.3s.3-.1.3-.3c0-1-.6-1.6-1.6-1.6z',
+    telegram: 'M11.9.4C5.6.4.4 5.6.4 11.9s5.2 11.5 11.5 11.5 11.5-5.2 11.5-11.5S18.2.4 11.9.4zm5.4 7.9-1.8 8.5c-.1.6-.5.8-1 .5l-2.8-2.1-1.3 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2-.1-.3-.4-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9l11.3-4.4c.5-.2 1 .1.8.9z',
+    whatsapp: 'M12 .5C5.7.5.6 5.6.6 11.9c0 2.1.6 4.1 1.6 5.8L.4 23.5l6-1.6c1.7.9 3.6 1.4 5.6 1.4 6.3 0 11.4-5.1 11.4-11.4S18.3.5 12 .5zm0 20.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.6.9.9-3.5-.2-.4c-1-1.6-1.5-3.3-1.5-5.1 0-5.4 4.4-9.7 9.8-9.7s9.7 4.4 9.7 9.8-4.3 9.6-9.7 9.6zm5.3-7.2c-.3-.1-1.7-.9-2-1s-.5-.1-.7.1c-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.2-.2-.5-.3z',
+    mail: 'M2.5 4h19c.8 0 1.5.7 1.5 1.5v13c0 .8-.7 1.5-1.5 1.5h-19C1.7 20 1 19.3 1 18.5v-13C1 4.7 1.7 4 2.5 4zm9.5 8.6L21 6.4H3l9 6.2zM3 8.3v9.9h18V8.3l-8.6 5.9c-.2.2-.6.2-.8 0L3 8.3z',
+    facebook: 'M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z'
+  };
+
+  function iconLink(href, key, color, label) {
+    return '<a href="' + href + '" aria-label="' + label + '" title="' + label +
+           '" style="--c:' + color + '"><svg viewBox="0 0 24 24" aria-hidden="true">' +
+           '<path d="' + ICONS[key] + '"/></svg></a>';
+  }
+
   block("footer", function () {
     var out = [];
-    if (C.phone) {
-      var d = C.phone.replace(/\D/g, "");
-      out.push('<a href="viber://chat?number=%2B' + d + '">💬 Viber</a>');
-    }
     if (C.telegram) {
       var tg = "https://t.me/" + esc(C.telegram) + (C.tgStart ? "?start=" + esc(C.tgStart) : "");
-      out.push('<a href="' + tg + '">✈️ Telegram</a>');
+      out.push(iconLink(tg, "telegram", "#229ED9", "Telegram"));
+    }
+    if (C.phone) {
+      var d = C.phone.replace(/\D/g, "");
+      out.push(iconLink("viber://chat?number=%2B" + d, "viber", "#7360F2", "Viber"));
     }
     if (C.whatsapp) {
       var wa = "https://wa.me/" + C.whatsapp.replace(/\D/g, "") +
                (C.waText ? "?text=" + encodeURIComponent(C.waText) : "");
-      out.push('<a href="' + wa + '">🟢 WhatsApp</a>');
+      out.push(iconLink(wa, "whatsapp", "#25D366", "WhatsApp"));
     }
-    if (C.email)    out.push('<a href="mailto:' + esc(C.email) + '">✉️ Пошта</a>');
-    if (C.facebook) out.push('<a href="' + esc(C.facebook) + '">Facebook</a>');
+    if (C.facebook) out.push(iconLink(esc(C.facebook), "facebook", "#1877F2", "Facebook"));
+    if (C.email)    out.push(iconLink("mailto:" + esc(C.email), "mail", "#5A6472", "Пошта"));
+
     $("footLinks").innerHTML = out.join("");
+    if (out.length) {
+      var n = document.createElement("p");
+      n.className = "linksNote";
+      n.textContent = "Напишіть нам — відповімо швидко";
+      $("footLinks").parentNode.insertBefore(n, $("footLinks").nextSibling);
+    }
   });
 
   /* ── Наявність ──────────────────────────────────────────────── */
