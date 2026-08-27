@@ -10,6 +10,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
 
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-dark.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512-dark.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180-dark.png">
+<meta name="theme-color" content="#1A1C1F">
+
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="POWER UA">
+<meta property="og:title" content="Павербанк AWEI P101K — заряд, коли немає світла">
+<meta property="og:description" content="Швидка зарядка 22.5W, дисплей заряду, ліхтар, два пристрої одночасно. Оплата при отриманні на Новій Пошті.">
+<meta property="og:image" content="/og-image-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+
 <script>
 /* ═══════════════════════════════════════════════════════════════════
    ЄДИНЕ МІСЦЕ, ДЕ ТРЕБА ЩОСЬ МІНЯТИ.
@@ -24,14 +40,18 @@ var CONFIG = {
   oldPrice: 3490,
 
   /* ── КОНТАКТИ ─────────────────────────────────────────────────── */
-  phone:    "",                    // "+380XXXXXXXXX" для Viber. Порожньо — кнопки не буде.
-  telegram: "",                    // нік БЕЗ @. Порожньо — поля в формі не буде.
+  phone:    "+380958051643",       // для Viber. Порожньо — кнопки не буде.
+  telegram: "powerua_help_bot",    // нік бота БЕЗ @. Порожньо — кнопки не буде.
+  tgStart:  "p101k",               // мітка товару в посиланні на бота
+  whatsapp: "",                    // "380XXXXXXXXX" без плюса. Порожньо — кнопки не буде.
+  waText:   "Доброго дня! Цікавить павербанк AWEI P101K",
   email:    "",
-  facebook: "",
+  facebook: "",                    // посилання на сторінку PowerUa
   shopName: "POWER UA",
+  logo:     "logo-horizontal.png", // порожньо — покажеться текст shopName
 
   /* ── META PIXEL ───────────────────────────────────────────────── */
-  pixelId:  "",                    // ID нового пікселя. Порожньо — не вантажиться.
+  pixelId:  "1681449083148874",     // ЗАМІНИТИ, якщо створиш окремий піксель PowerUa
 
   /* ── КУДИ ЙДЕ ЗАЯВКА ──────────────────────────────────────────── */
   endpoint: "/api/lead",           // свій бот заявок
@@ -152,6 +172,7 @@ h3{font-size:17px;font-weight:800}
 /* ── шапка ── */
 .hero{background:var(--dark);color:#fff;padding:28px 22px 24px;text-align:center}
 .hero .brand{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--cta);margin-bottom:12px}
+.hero .brand .logoImg{height:34px;width:auto;margin:0 auto 2px}
 .hero p{color:#BCC6D4;font-size:15px;margin-top:12px;max-width:34ch;margin-inline:auto}
 
 /* ── галерея ── */
@@ -432,7 +453,11 @@ footer .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin
 
   /* ── Тексти й ціни ──────────────────────────────────────────── */
   block("texts", function () {
-    $("brand").textContent    = C.shopName || "";
+    if (C.logo) {
+      $("brand").innerHTML = '<img src="' + esc(C.logo) + '" alt="' + esc(C.shopName) + '" class="logoImg">';
+    } else {
+      $("brand").textContent = C.shopName || "";
+    }
     $("title").textContent    = C.title || C.product || "";
     $("subtitle").textContent = C.subtitle || "";
     $("prodName").textContent = C.product || "";
@@ -675,7 +700,15 @@ footer .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin
       var d = C.phone.replace(/\D/g, "");
       out.push('<a href="viber://chat?number=%2B' + d + '">💬 Viber</a>');
     }
-    if (C.telegram) out.push('<a href="https://t.me/' + esc(C.telegram) + '">✈️ Telegram</a>');
+    if (C.telegram) {
+      var tg = "https://t.me/" + esc(C.telegram) + (C.tgStart ? "?start=" + esc(C.tgStart) : "");
+      out.push('<a href="' + tg + '">✈️ Telegram</a>');
+    }
+    if (C.whatsapp) {
+      var wa = "https://wa.me/" + C.whatsapp.replace(/\D/g, "") +
+               (C.waText ? "?text=" + encodeURIComponent(C.waText) : "");
+      out.push('<a href="' + wa + '">🟢 WhatsApp</a>');
+    }
     if (C.email)    out.push('<a href="mailto:' + esc(C.email) + '">✉️ Пошта</a>');
     if (C.facebook) out.push('<a href="' + esc(C.facebook) + '">Facebook</a>');
     $("footLinks").innerHTML = out.join("");
