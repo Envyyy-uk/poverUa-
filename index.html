@@ -322,6 +322,47 @@ footer .links a:active{transform:translateY(0)}
 footer .links svg{width:23px;height:23px;fill:#fff;display:block}
 footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
 
+/* ── плаваюча підтримка ── */
+.sup{
+  position:fixed;z-index:70;
+  right:max(14px, calc(50vw - 310px + 14px));
+  bottom:calc(var(--dockH, 70px) + 14px + env(safe-area-inset-bottom, 0px));
+  display:flex;flex-direction:column;align-items:flex-end;gap:10px;
+}
+.sup .opt{
+  display:flex;align-items:center;gap:9px;text-decoration:none;
+  opacity:0;transform:translateY(14px) scale(.86);pointer-events:none;
+  transition:opacity .2s ease, transform .26s cubic-bezier(.2,1.3,.4,1);
+  transition-delay:0s;
+}
+.sup.on .opt{opacity:1;transform:none;pointer-events:auto;transition-delay:calc(var(--i) * 55ms)}
+.sup .opt .nm{
+  background:#fff;color:var(--deep);font-weight:700;font-size:14px;
+  padding:7px 12px;border-radius:9px;box-shadow:0 3px 12px rgba(28,34,43,.18);white-space:nowrap;
+}
+.sup .opt .ic{
+  width:44px;height:44px;border-radius:50%;background:var(--c);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(28,34,43,.26);flex:none;
+}
+.sup .opt .ic svg{width:22px;height:22px;fill:#fff;display:block}
+.sup .fab{
+  display:flex;align-items:center;gap:9px;height:54px;padding:0 19px 0 15px;
+  border:0;border-radius:27px;background:#1A1C1F;color:#F0ECE4;
+  font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;
+  box-shadow:0 6px 22px rgba(0,0,0,.3);
+  transition:transform .2s ease, background .2s ease;
+}
+.sup .fab:active{transform:scale(.96)}
+.sup .fab svg{width:26px;height:26px;display:block;transition:transform .3s ease}
+.sup.on .fab{background:#3A3F47}
+.sup.on .fab svg{transform:rotate(180deg) scale(.86)}
+.sup .fab .lbl{transition:max-width .25s ease, opacity .2s ease;max-width:120px;overflow:hidden;white-space:nowrap}
+.sup.on .fab .lbl{max-width:0;opacity:0}
+@media (prefers-reduced-motion:reduce){
+  .sup .opt,.sup .fab,.sup .fab svg{transition:none}
+}
+
 .lb{position:fixed;inset:0;z-index:100;background:rgba(12,16,22,.94);display:none;align-items:center;justify-content:center;padding:18px}
 .lb.on{display:flex}
 .lb img{max-width:100%;max-height:86vh;object-fit:contain}
@@ -424,7 +465,7 @@ footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
 
   <footer>
     <b id="footName"></b>
-    <div class="links" id="footLinks"></div>
+    <div class="links" id="footLinks" hidden></div>
     <p style="margin-top:12px">© <span id="year"></span> · Усі права захищені</p>
   </footer>
 </div>
@@ -432,6 +473,14 @@ footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
 <div class="dock">
   <div class="p"><b id="dockPrice"></b><s id="dockOld"></s></div>
   <a class="cta" href="#order">ЗАМОВИТИ</a>
+</div>
+
+<div class="sup" id="sup" hidden>
+  <div id="supOpts"></div>
+  <button class="fab" id="supBtn" type="button" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" id="supIco"></svg>
+    <span class="lbl">Підтримка</span>
+  </button>
 </div>
 
 <script>
@@ -713,37 +762,106 @@ footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
     facebook: 'M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z'
   };
 
+  var ICON_HEADSET =
+    '<g fill="none" stroke="#C9952A" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M4 13.5v-1.7a8 8 0 0 1 16 0v1.7"/>' +
+    '<rect x="2" y="13" width="4.6" height="6.6" rx="2.3"/>' +
+    '<rect x="17.4" y="13" width="4.6" height="6.6" rx="2.3"/>' +
+    '<path d="M19.7 19.6v.6a2.8 2.8 0 0 1-2.8 2.8h-2.6"/>' +
+    '</g>';
+
+  var ICON_CLOSE =
+    '<path fill="#C9952A" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 ' +
+    '2.9 18.3 9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/>';
+
   function iconLink(href, key, color, label) {
     return '<a href="' + href + '" aria-label="' + label + '" title="' + label +
            '" style="--c:' + color + '"><svg viewBox="0 0 24 24" aria-hidden="true">' +
            '<path d="' + ICONS[key] + '"/></svg></a>';
   }
 
-  block("footer", function () {
-    var out = [];
+  /* ── Плаваюча кнопка підтримки ───────────────────────────────── */
+  block("support", function () {
+    var ch = [];
+
     if (C.telegram) {
-      var tg = "https://t.me/" + esc(C.telegram) + (C.tgStart ? "?start=" + esc(C.tgStart) : "");
-      out.push(iconLink(tg, "telegram", "#229ED9", "Telegram"));
-    }
-    if (C.phone) {
-      var d = C.phone.replace(/\D/g, "");
-      out.push(iconLink("viber://chat?number=%2B" + d, "viber", "#7360F2", "Viber"));
+      ch.push({
+        href: "https://t.me/" + esc(C.telegram) + (C.tgStart ? "?start=" + esc(C.tgStart) : ""),
+        key: "telegram", color: "#229ED9", name: "Telegram"
+      });
     }
     if (C.whatsapp) {
-      var wa = "https://wa.me/" + C.whatsapp.replace(/\D/g, "") +
-               (C.waText ? "?text=" + encodeURIComponent(C.waText) : "");
-      out.push(iconLink(wa, "whatsapp", "#25D366", "WhatsApp"));
+      ch.push({
+        href: "https://wa.me/" + C.whatsapp.replace(/\D/g, "") +
+              (C.waText ? "?text=" + encodeURIComponent(C.waText) : ""),
+        key: "whatsapp", color: "#25D366", name: "WhatsApp"
+      });
     }
-    if (C.facebook) out.push(iconLink(esc(C.facebook), "facebook", "#1877F2", "Facebook"));
-    if (C.email)    out.push(iconLink("mailto:" + esc(C.email), "mail", "#5A6472", "Пошта"));
+    if (C.phone) {
+      ch.push({
+        href: "viber://chat?number=%2B" + C.phone.replace(/\D/g, ""),
+        key: "viber", color: "#7360F2", name: "Viber"
+      });
+    }
+    if (C.facebook) {
+      ch.push({ href: esc(C.facebook), key: "facebook", color: "#1877F2", name: "Facebook" });
+    }
+    if (C.email) {
+      ch.push({ href: "mailto:" + esc(C.email), key: "mail", color: "#5A6472", name: "Пошта" });
+    }
 
-    $("footLinks").innerHTML = out.join("");
-    if (out.length) {
-      var n = document.createElement("p");
-      n.className = "linksNote";
-      n.textContent = "Напишіть нам — відповімо швидко";
-      $("footLinks").parentNode.insertBefore(n, $("footLinks").nextSibling);
+    if (!ch.length) return;
+
+    var box = $("sup");
+    var html = "";
+    /* нижній варіант з'являється першим */
+    for (var i = 0; i < ch.length; i++) {
+      var c = ch[ch.length - 1 - i];
+      html += '<a class="opt" style="--i:' + i + '" href="' + c.href +
+              '" target="_blank" rel="noopener" aria-label="' + c.name + '">' +
+              '<span class="nm">' + c.name + '</span>' +
+              '<span class="ic" style="--c:' + c.color + '">' +
+              '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICONS[c.key] + '"/></svg>' +
+              '</span></a>';
     }
+    $("supOpts").innerHTML = html;
+    $("supIco").innerHTML = ICON_HEADSET;
+    box.hidden = false;
+
+    /* щоб кнопка не залазила на нижню панель із ціною */
+    function fitDock() {
+      var d = document.querySelector(".dock");
+      document.documentElement.style.setProperty(
+        "--dockH", (d ? d.offsetHeight : 0) + "px"
+      );
+    }
+    fitDock();
+    window.addEventListener("resize", fitDock);
+
+    function setOpen(on) {
+      box.classList.toggle("on", on);
+      $("supBtn").setAttribute("aria-expanded", on ? "true" : "false");
+      $("supIco").innerHTML = on ? ICON_CLOSE : ICON_HEADSET;
+    }
+
+    $("supBtn").addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(!box.classList.contains("on"));
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!box.contains(e.target)) setOpen(false);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+
+    /* після вибору месенджера згортаємо */
+    $("supOpts").addEventListener("click", function () {
+      setTimeout(function () { setOpen(false); }, 200);
+    });
   });
 
   /* ── Наявність ──────────────────────────────────────────────── */
