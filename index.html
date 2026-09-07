@@ -720,7 +720,8 @@ footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
         name:  name.value.trim(),
         phone: "+380" + digits9(phone.value),
         tg:    tgEl ? tgEl.value.trim().replace(/^@/, "") : "",
-        utm:   location.search,
+        utm:   (function(){var p=new URLSearchParams(location.search);["fbclid","gclid","ttclid"].forEach(function(k){p.delete(k)});var s=p.toString();return s?"?"+s:"";})(),
+
         ts:    new Date().toISOString()
       };
 
