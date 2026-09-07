@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
 <title>Павербанк AWEI P101K — заряд, коли немає світла. Оплата при отриманні</title>
-<meta name="description" content="Павербанk AWEI P101K: швидка зарядка 22.5W, дисплей заряду, ліхтар, два пристрої одночасно. Оплата при отриманні на Новій Пошті.">
+<meta name="description" content="Павербанk AWEI P101K: швидка зарядка 22.5W, дисплей заряду, два пристрої одночасно, близько 10 зарядок телефона. Оплата при отриманні на Новій Пошті.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="POWER UA">
 <meta property="og:title" content="Павербанк AWEI P101K — заряд, коли немає світла">
-<meta property="og:description" content="Швидка зарядка 22.5W, дисплей заряду, ліхтар, два пристрої одночасно. Оплата при отриманні на Новій Пошті.">
+<meta property="og:description" content="Швидка зарядка 22.5W, дисплей заряду, два пристрої одночасно, близько 10 зарядок телефона. Оплата при отриманні на Новій Пошті.">
 <meta property="og:image" content="/og-image-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -64,11 +64,11 @@ var CONFIG = {
   ],
 
   /* ── ТАЙМЕР ───────────────────────────────────────────────────── */
-  timer: { on: true, hours: 17, restart: true },
+  timer: { on: true, hours: 24, restart: true },
 
   /* ── ГОЛОВНИЙ ЕКРАН ───────────────────────────────────────────── */
   title:    "ПАВЕРБАНК AWEI P101K",
-  subtitle: "Швидка зарядка 22.5W · Дисплей заряду · Ліхтар · 2 пристрої одночасно",
+  subtitle: "До 10 зарядок телефона · Швидка зарядка 22.5W · Дисплей заряду · 2 пристрої одночасно",
 
   /* ── ПРОБЛЕМИ → РІШЕННЯ ───────────────────────────────────────── */
   problems: [
@@ -80,7 +80,7 @@ var CONFIG = {
   solutions: [
     "Телефон і роутер живі, поки в будинку темно",
     "Дисплей показує точний залишок — нічого гадати",
-    "Окремий ліхтар на корпусі, телефон не витрачається",
+    "Перевірено вручну: 5 повних зарядок iPhone — і залишилось ще більше половини",
     "Швидка зарядка 22.5W: телефон набирає заряд помітно швидше",
     "Два пристрої одночасно — USB і Type-C"
   ],
@@ -327,7 +327,6 @@ footer .linksNote{font-size:13px;color:var(--soft);margin-top:2px}
   position:fixed;z-index:70;
   right:max(14px, calc(50vw - 310px + 14px));
   bottom:calc(var(--dockH, 70px) + 14px + env(safe-area-inset-bottom, 0px));
-
   display:flex;flex-direction:column;align-items:flex-end;gap:10px;
 }
 .sup .opt{
